@@ -98,7 +98,7 @@ past({Mega, Sec, Micro} = Value) when is_integer(Mega) andalso is_integer(Sec) a
 	Micros < Now orelse throw(validation_error).
 
 size(MinMax, Value) when is_list(Value) ->
-	size(MinMax, true, MinMax, true).
+	size(MinMax, true, MinMax, true, Value).
 
 size(Min, true, Max, true, Value) when is_list(Value) ->
 	Length = length(Value),
