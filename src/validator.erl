@@ -29,11 +29,19 @@ behaviour_info(_) ->
     undefined.
 
 validate(Obj, Validator) ->
-	lists:flatten([validate_field(Field, Validator:'#get-'(Field, Obj), Validations) || {Field, Validations} <- Validator:validations()]).
+	Results = lists:flatten([validate_field(Field, Validator:'#get-'(Field, Obj), Validations) || {Field, Validations} <- Validator:validations()]),
+	case Results of
+		[] -> ok;
+		_ -> {validation_error, Results}
+	end.
 
 validate(Field, Obj, Validator) ->
 	{_, Validations} = lists:keyfind(Field, 1, Validator:validations()),
-	validate_field(Field, Validator:'#get-'(Field, Obj), Validations).
+	Result = validate_field(Field, Validator:'#get-'(Field, Obj), Validations),
+	case Result of
+		[] -> ok;
+		_ -> {validation_error, Result}
+	end.
 	
 validate_field(Field, Value, Validations) when is_list(Validations) ->
 	lists:foldl(
@@ -49,7 +57,7 @@ validate_field(Field, Value, Validations) when is_list(Validations) ->
 				end,
 				Acc
 			catch 
-				throw:validation_error -> [{validation_error, {Field, Value, Validation}}] ++ Acc
+				throw:validation_error -> [{Field, Value, Validation}] ++ Acc
 			end
 		end,
 	[], Validations).
