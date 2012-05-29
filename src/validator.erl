@@ -11,6 +11,7 @@
 		future/1,
 		past/1,
 		size/5,
+		size/2,
 		not_blank/1,
 		null/1,
 		pattern/2,
@@ -95,6 +96,9 @@ past({Mega, Sec, Micro} = Value) when is_integer(Mega) andalso is_integer(Sec) a
 	Micros = time_to_micros(Value),
 	Now = time_to_micros(now()),
 	Micros < Now orelse throw(validation_error).
+
+size(MinMax, Value) when is_list(Value) ->
+	size(MinMax, true, MinMax, true).
 
 size(Min, true, Max, true, Value) when is_list(Value) ->
 	Length = length(Value),
